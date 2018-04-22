@@ -6,8 +6,35 @@ import (
 	"time"
 )
 
+var sourcePseudoRandom = rand.NewSource(time.Now().UnixNano())
+
+func chooseParticipantsSecondDoor(doors int,participantsDoor int ,hostDoor int) int  {
+	participantsSecondDoor := 0
+	for {
+		participantsSecondDoor = getPseudoRandomDoor(doors)
+		if participantsSecondDoor != participantsDoor && participantsSecondDoor != hostDoor {
+			break
+		}
+	}
+	return participantsSecondDoor
+}
+
+func getPseudoRandomDoor(doors int) int {
+	return rand.New(sourcePseudoRandom).Intn(doors)
+}
+
+func chooseHostDoor(doors int,participantsDoor int,prizeDoor int) int {
+	hostDoor := 0
+	for {
+		hostDoor = getPseudoRandomDoor(doors)
+		if hostDoor != participantsDoor && hostDoor != prizeDoor {
+			break
+		}
+	}
+	return hostDoor
+}
+
 func main() {
-	sourcePseudoRandom := rand.NewSource(time.Now().UnixNano())
 
 	// In this version of the code only three doors can be benchmarked for the sake of simplicity
 	const doors = 3
@@ -16,7 +43,6 @@ func main() {
 	hostDoor := 0
 	losers := 0
 	participantsDoor := 0
-	participantsSecondDoor := 0
 	prizeDoor := 0
 	winners := 0
 
@@ -24,26 +50,14 @@ func main() {
 	for i < numberOfExperiments {
 
 		// Assign random doors to prize and to participant
-		prizeDoor = rand.New(sourcePseudoRandom).Intn(doors)
-		participantsDoor = rand.New(sourcePseudoRandom).Intn(doors)
+		prizeDoor = getPseudoRandomDoor(doors)
+		participantsDoor = getPseudoRandomDoor(doors)
 
 		// Choose Host door
-		for {
-			hostDoor = rand.New(sourcePseudoRandom).Intn(doors)
-			if hostDoor != participantsDoor && hostDoor != prizeDoor {
-				break
-			}
-		}
+		hostDoor = chooseHostDoor(doors,participantsDoor,prizeDoor)
 
 		if(participantChangesDoors){
-			// Model change of participant's door choice
-			for {
-				participantsSecondDoor = rand.New(sourcePseudoRandom).Intn(doors)
-				if participantsSecondDoor != participantsDoor && participantsSecondDoor != hostDoor {
-					break
-				}
-			}
-			participantsDoor = participantsSecondDoor
+			participantsDoor = chooseParticipantsSecondDoor(doors,participantsDoor,hostDoor)
 		}
 
 		if participantsDoor == prizeDoor {
