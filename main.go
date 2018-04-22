@@ -8,6 +8,26 @@ import (
 
 var sourcePseudoRandom = rand.NewSource(time.Now().UnixNano())
 
+func containsCertainDoor(doors []int, aDoor int) bool {
+	for _, currentDoor := range doors {
+		if currentDoor == aDoor {
+			return true
+		}
+	}
+	return false
+}
+
+func chooseDoorDifferentThan(doors int, notEligibleDoors []int) int{
+	chosenDoor := 0
+	for {
+		chosenDoor = getPseudoRandomDoor(doors)
+		if !containsCertainDoor(notEligibleDoors,chosenDoor) {
+			break
+		}
+	}
+	return chosenDoor
+}
+
 func chooseParticipantsSecondDoor(doors int,participantsDoor int ,hostDoor int) int  {
 	participantsSecondDoor := 0
 	for {
@@ -54,10 +74,10 @@ func main() {
 		participantsDoor = getPseudoRandomDoor(doors)
 
 		// Choose Host door
-		hostDoor = chooseHostDoor(doors,participantsDoor,prizeDoor)
+		hostDoor = chooseDoorDifferentThan(doors,[]int {participantsDoor,prizeDoor})
 
 		if(participantChangesDoors){
-			participantsDoor = chooseParticipantsSecondDoor(doors,participantsDoor,hostDoor)
+			participantsDoor = chooseDoorDifferentThan(doors,[]int {participantsDoor,hostDoor})
 		}
 
 		if participantsDoor == prizeDoor {
