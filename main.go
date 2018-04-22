@@ -28,30 +28,8 @@ func chooseDoorDifferentThan(doors int, notEligibleDoors []int) int{
 	return chosenDoor
 }
 
-func chooseParticipantsSecondDoor(doors int,participantsDoor int ,hostDoor int) int  {
-	participantsSecondDoor := 0
-	for {
-		participantsSecondDoor = getPseudoRandomDoor(doors)
-		if participantsSecondDoor != participantsDoor && participantsSecondDoor != hostDoor {
-			break
-		}
-	}
-	return participantsSecondDoor
-}
-
 func getPseudoRandomDoor(doors int) int {
 	return rand.New(sourcePseudoRandom).Intn(doors)
-}
-
-func chooseHostDoor(doors int,participantsDoor int,prizeDoor int) int {
-	hostDoor := 0
-	for {
-		hostDoor = getPseudoRandomDoor(doors)
-		if hostDoor != participantsDoor && hostDoor != prizeDoor {
-			break
-		}
-	}
-	return hostDoor
 }
 
 func main() {
